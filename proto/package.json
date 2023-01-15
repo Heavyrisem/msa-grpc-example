@@ -1,0 +1,21 @@
+{
+  "name": "proto",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "tsc:proto": "protoc --ts_out ./src --proto_path ./src src/**/*.proto",
+    "build:proto-type": "ts-node build/proto",
+    "build:tsc": "rimraf dist && cp -r ./src ./dist && tsc && rimraf ./dist/build ./dist/src",
+    "build": "yarn tsc:proto && yarn build:proto-type && yarn build:tsc"
+  },
+  "dependencies": {
+    "@protobuf-ts/plugin": "^2.8.2",
+    "@protobuf-ts/runtime": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "rimraf": "^4.0.5",
+    "ts-node": "^10.9.1"
+  }
+}
