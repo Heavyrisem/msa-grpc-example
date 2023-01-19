@@ -1,1 +1,1 @@
-export type protos = 'hero/hero.proto'|'hero/test.proto';
+export type protos = 'hero\hero.proto';

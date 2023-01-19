@@ -1,33 +1,46 @@
-import fs from "fs";
-import { join } from "path";
+import { findAllProtoFiles, sourcePath } from "./paths";
+import { sync } from "cross-spawn";
+import { SpawnSyncOptions } from "child_process";
+import { join, normalize } from "path";
 
-const getFilePaths = (path: string, exclude?: string[]): string[] => {
-  const results = fs.readdirSync(path, { withFileTypes: true });
-
-  const protoFiles = results
-    .filter((item) => !exclude?.includes(item.name))
-    .map((item) => {
-      const name = join(path, item.name);
-      if (item.isFile()) return name;
-      else return getFilePaths(name, exclude);
-    });
-
-  return protoFiles.flat();
-};
-
-const generateProtoType = (
-  savePath: string,
-  sourcePath: string,
-  typeName: string
+const execute = (
+  command: string,
+  args: string[],
+  options?: SpawnSyncOptions
 ) => {
-  const protoFiles = getFilePaths(sourcePath, ["node_modules"])
-    .filter((filePath) => filePath.endsWith(".proto"))
-    .map((filePath) => filePath.replace(sourcePath, ""));
-  const typeString = `export type ${typeName} = '${protoFiles.join("'|'")}';`;
-  fs.writeFileSync(savePath, typeString);
+  console.log("Running command:", [command, args.join(" ")].join(" "), options);
+  const ps = sync(command, args, options);
+
+  if (ps.error) {
+    console.log(ps.error);
+    throw ps.error;
+  } else if (ps.status !== 0) {
+    console.log(ps.output.toString());
+    throw new Error(
+      `Non-zero Exit Code: ${ps.status}, ${command} ${args.join(" ")}`
+    );
+  } else {
+    return ps;
+  }
 };
 
-const sourcePath = join(__dirname, "../src/");
-const savePath = join(__dirname, "../src/proto.type.ts");
+const buildAllProto = () => {
+  const protoFiles = findAllProtoFiles(sourcePath);
+  protoFiles.forEach((protoPath) => {
+    const result = execute(
+      "npx",
+      [
+        "protoc",
+        "--ts_out",
+        "./src",
+        "--proto_path",
+        "./src",
+        normalize(join("./src/", protoPath)),
+      ],
+      { cwd: join(__dirname, "..") }
+    );
+    if (result.error) console.log(result.stderr.toString());
+  });
+};
 
-generateProtoType(savePath, sourcePath, "protos");
+buildAllProto();
