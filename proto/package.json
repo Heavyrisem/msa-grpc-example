@@ -1,10 +1,10 @@
 {
-  "name": "proto",
-  "version": "1.0.0",
+  "name": "@heavyrisem/msa-grpc-example-proto",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build:proto-type": "ts-node build/proto && ts-node build/paths",
+    "build:proto-type": "ts-node build/proto",
     "build:tsc": "rimraf dist && copyfiles -u 1 ./src/**/*.proto ./dist && tsc && rimraf ./dist/build",
     "build": "yarn build:tsc && yarn build:proto-type"
   },
