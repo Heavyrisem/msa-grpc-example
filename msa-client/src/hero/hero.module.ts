@@ -3,11 +3,14 @@ import { getProtoPath } from '@heavyrisem/msa-grpc-example-proto';
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
+import { ConfigurationModule } from '~modules/config/config.module';
+
 import { HeroController } from './hero.controller';
 import { HeroService } from './hero.service';
 
 @Module({
   imports: [
+    ConfigurationModule,
     ClientsModule.register([
       {
         name: 'HERO_PACKAGE',
