@@ -1,12 +1,13 @@
 {
   "name": "@heavyrisem/msa-grpc-example-proto",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
     "build:proto-type": "ts-node build/proto",
-    "build:tsc": "rimraf dist && copyfiles -u 1 ./src/**/*.proto ./dist && tsc && rimraf ./dist/build",
-    "build": "yarn build:tsc && yarn build:proto-type"
+    "build:tsc": "copyfiles -u 1 ./src/**/*.proto ./dist && tsc && rimraf ./dist/build",
+    "build": "yarn build:proto-type && yarn build:tsc",
+    "prebuild": "rimraf dist"
   },
   "dependencies": {
     "@protobuf-ts/plugin": "^2.8.2",

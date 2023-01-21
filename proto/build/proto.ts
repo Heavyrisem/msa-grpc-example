@@ -1,4 +1,4 @@
-import { findAllProtoFiles } from "./paths";
+import { findAllFilesWithExtend } from "./paths";
 import { sync } from "cross-spawn";
 import { SpawnSyncOptions } from "child_process";
 import { join, normalize } from "path";
@@ -25,8 +25,8 @@ const execute = (
   }
 };
 
-const buildAllProto = () => {
-  const protoFiles = findAllProtoFiles(sourcePath);
+const buildAllProto = (sourcePath: string) => {
+  const protoFiles = findAllFilesWithExtend(sourcePath, ".proto");
   protoFiles.forEach((protoPath) => {
     const result = execute(
       "npx",
@@ -36,7 +36,6 @@ const buildAllProto = () => {
         "./src",
         "--proto_path",
         "./src",
-        "--client_none",
         normalize(join("./src/", protoPath)),
       ],
       { cwd: join(__dirname, "..") }
@@ -47,18 +46,20 @@ const buildAllProto = () => {
   console.log("Proto Build Finish");
 };
 
-const generateProtoType = (
+const generateProtoTypes = (
   savePath: string,
   sourcePath: string,
   typeName: string
 ) => {
-  const protoFiles = findAllProtoFiles(sourcePath).map((filePath) =>
-    filePath.replace("\\", "/")
-  );
+  const protoFiles = findAllFilesWithExtend(sourcePath, ".proto");
+  const typeFiles = findAllFilesWithExtend(sourcePath, ".ts", [
+    "index.ts",
+    "proto.type.ts",
+  ]).map((filePath) => filePath.replace(".ts", ""));
 
   const typeString = `
 export type ${typeName} = '${protoFiles.join("'|'")}';
-${protoFiles.map((filePath) => `export * from '${filePath};'`).join("\n")}
+${typeFiles.map((filePath) => `export * from './${filePath}';`).join("\n")}
   `;
   fs.writeFileSync(savePath, typeString);
 
@@ -67,5 +68,5 @@ ${protoFiles.map((filePath) => `export * from '${filePath};'`).join("\n")}
 
 const sourcePath = join(__dirname, "../src/");
 const savePath = join(__dirname, "../src/proto.type.ts");
-generateProtoType(savePath, sourcePath, "protos");
-buildAllProto();
+buildAllProto(sourcePath);
+generateProtoTypes(savePath, sourcePath, "protos");

@@ -28,6 +28,7 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.8.4",
     "@grpc/proto-loader": "^0.7.4",
+    "@heavyrisem/msa-grpc-example-proto": "^1.0.6",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^8.0.0",
@@ -37,6 +38,7 @@
     "joi": "^17.6.0",
     "mysql2": "^2.3.3",
     "nest-winston": "^1.7.0",
+    "nestjs-grpc-reflection": "^0.0.21",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",

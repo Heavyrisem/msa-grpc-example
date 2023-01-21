@@ -15,8 +15,13 @@ const getFilePaths = (path: string, exclude?: string[]): string[] => {
   return protoFiles.flat();
 };
 
-export const findAllProtoFiles = (sourcePath: string) => {
-  return getFilePaths(sourcePath, ["node_modules"])
-    .filter((filePath) => filePath.endsWith(".proto"))
-    .map((filePath) => filePath.replace(sourcePath, ""));
+export const findAllFilesWithExtend = (
+  sourcePath: string,
+  extend: string,
+  exclude: string[] = []
+) => {
+  return getFilePaths(sourcePath, ["node_modules", ...exclude])
+    .filter((filePath) => filePath.endsWith(extend))
+    .map((filePath) => filePath.replace(sourcePath, ""))
+    .map((filePath) => filePath.replace("/\\g", "/"));
 };

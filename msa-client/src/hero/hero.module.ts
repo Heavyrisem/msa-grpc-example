@@ -13,6 +13,7 @@ import { HeroService } from './hero.service';
         name: 'HERO_PACKAGE',
         transport: Transport.GRPC,
         options: {
+          url: process.env.MSA_SERVER_URL,
           package: 'hero',
           protoPath: getProtoPath('hero/hero.proto'),
         },
