@@ -26,6 +26,7 @@
     "typeorm:sync": "yarn typeorm schema:sync"
   },
   "dependencies": {
+    "@heavyrisem/msa-grpc-example-proto": "^1.0.5",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^8.0.0",

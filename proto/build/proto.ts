@@ -1,7 +1,8 @@
-import { findAllProtoFiles, sourcePath } from "./paths";
+import { findAllProtoFiles } from "./paths";
 import { sync } from "cross-spawn";
 import { SpawnSyncOptions } from "child_process";
 import { join, normalize } from "path";
+import fs from "fs";
 
 const execute = (
   command: string,
@@ -35,12 +36,36 @@ const buildAllProto = () => {
         "./src",
         "--proto_path",
         "./src",
+        "--client_none",
         normalize(join("./src/", protoPath)),
       ],
       { cwd: join(__dirname, "..") }
     );
     if (result.error) console.log(result.stderr.toString());
   });
+
+  console.log("Proto Build Finish");
 };
 
+const generateProtoType = (
+  savePath: string,
+  sourcePath: string,
+  typeName: string
+) => {
+  const protoFiles = findAllProtoFiles(sourcePath).map((filePath) =>
+    filePath.replace("\\", "/")
+  );
+
+  const typeString = `
+export type ${typeName} = '${protoFiles.join("'|'")}';
+${protoFiles.map((filePath) => `export * from '${filePath};'`).join("\n")}
+  `;
+  fs.writeFileSync(savePath, typeString);
+
+  console.log("Types Build Finish");
+};
+
+const sourcePath = join(__dirname, "../src/");
+const savePath = join(__dirname, "../src/proto.type.ts");
+generateProtoType(savePath, sourcePath, "protos");
 buildAllProto();

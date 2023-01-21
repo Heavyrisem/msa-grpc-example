@@ -20,17 +20,3 @@ export const findAllProtoFiles = (sourcePath: string) => {
     .filter((filePath) => filePath.endsWith(".proto"))
     .map((filePath) => filePath.replace(sourcePath, ""));
 };
-
-const generateProtoType = (
-  savePath: string,
-  sourcePath: string,
-  typeName: string
-) => {
-  const protoFiles = findAllProtoFiles(sourcePath);
-  const typeString = `export type ${typeName} = '${protoFiles.join("'|'")}';`;
-  fs.writeFileSync(savePath, typeString);
-};
-
-export const sourcePath = join(__dirname, "../src/");
-export const savePath = join(__dirname, "../src/proto.type.ts");
-generateProtoType(savePath, sourcePath, "protos");
